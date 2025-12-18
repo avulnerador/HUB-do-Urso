@@ -1,27 +1,409 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Hub do Urso</title>
-    <meta name="description" content="Ferramentas de RPG do Urso" />
-    <!-- Importing Inter font for a premium look -->
+    
+    <!-- Fonts: Poppins (Premium/Modern) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="importmap">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons: FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 
+         * DESIGN SYSTEM & VARIABLES 
+         */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-glow: #00d2ff; /* Cyan Neon */
+            --accent-secondary: #9b59b6; /* Purple Neon */
+            --card-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* LAYOUT CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 0 60px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-area h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .logo-area p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 300;
+            margin-top: 5px;
+        }
+
+        /* LANGUAGE SELECTOR */
+        .lang-selector {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .lang-btn:hover {
+            color: white;
+        }
+
+        .lang-btn.active {
+            background: var(--accent-glow);
+            color: #0f0c29;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* APP GRID */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding-bottom: 50px;
+        }
+
+        /* GLASSMORPHISM CARDS */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--card-radius);
+            padding: 35px;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Card Hover Effects */
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: var(--glass-highlight);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 
+                        0 0 20px rgba(0, 210, 255, 0.2); 
+        }
+
+        .card:hover .icon-box {
+            transform: scale(1.1) rotate(5deg);
+            color: var(--accent-glow);
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .card:hover .card-footer {
+            color: var(--accent-glow);
+            transform: translateX(5px);
+        }
+
+        /* Card Content */
+        .icon-box {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            margin-top: auto;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .logo-area h1 { font-size: 2rem; }
+        }
+    </style>
+<script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-icons/": "https://esm.sh/react-icons@^5.5.0/",
     "react-icons": "https://esm.sh/react-icons@^5.5.0",
-    "react-icons/": "https://esm.sh/react-icons@^5.5.0/"
+    "react": "https://esm.sh/react@^19.2.3",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <h1 id="header-title">RPG Hub do Urso</h1>
+                <p id="header-subtitle">Ferramentas essenciais para RPG</p>
+            </div>
+            
+            <div class="lang-selector">
+                <button class="lang-btn active" onclick="setLanguage('pt')">PT</button>
+                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="setLanguage('es')">ES</button>
+            </div>
+        </header>
+
+        <main class="app-grid" id="app-grid">
+            <!-- Cards will be injected here by JavaScript -->
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 RPG do Urso. Crafted with code & magic.</p>
+    </footer>
+
+    <script>
+        // --- DATA & CONFIG ---
+        const translations = {
+            pt: {
+                title: "RPG Hub do Urso",
+                subtitle: "Ferramentas essenciais para Mestres e Jogadores",
+                cta: "Acessar Ferramenta"
+            },
+            en: {
+                title: "Bear's RPG Hub",
+                subtitle: "Essential tools for Game Masters and Players",
+                cta: "Visit Tool"
+            },
+            es: {
+                title: "RPG Hub del Oso",
+                subtitle: "Herramientas esenciales para Game Masters y Jugadores",
+                cta: "Visitar Herramienta"
+            }
+        };
+
+        const apps = [
+            {
+                id: 1,
+                link: "https://dungeon.rpgdourso.com",
+                iconClass: "fa-solid fa-dungeon",
+                title: {
+                    pt: "Arquiteto de Masmorras",
+                    en: "Dungeon Architect",
+                    es: "Arquitecto de Mazmorras"
+                },
+                description: {
+                    pt: "Gerador de eventos aleatórios para RPG.",
+                    en: "Random event generator for RPGs.",
+                    es: "Generador de eventos aleatorios para RPG."
+                }
+            },
+            {
+                id: 2,
+                link: "https://roguemap.rpgdourso.com",
+                iconClass: "fa-solid fa-diagram-project",
+                title: {
+                    pt: "RogueMap do Urso",
+                    en: "Bear's RogueMap",
+                    es: "RogueMap del Oso"
+                },
+                description: {
+                    pt: "Criador de mapas de nós interativos estilo roguelike.",
+                    en: "Roguelike style interactive node map creator.",
+                    es: "Creador de mapas de nodos interactivos estilo roguelike."
+                }
+            },
+            {
+                id: 3,
+                link: "https://void.rpgdourso.com",
+                iconClass: "fa-solid fa-ghost",
+                title: {
+                    pt: "Void do Urso",
+                    en: "Bear's Void",
+                    es: "Vacío del Oso"
+                },
+                description: {
+                    pt: "Ferramentas de geração de monstros de Daggerheart e tradução de fichas.",
+                    en: "Daggerheart monster generation tools and sheet translation.",
+                    es: "Herramientas de generación de monstruos Daggerheart y traducción de fichas."
+                }
+            },
+            {
+                id: 4,
+                link: "https://forbidden-converter.rpgdourso.com",
+                iconClass: "fa-solid fa-file-export",
+                title: {
+                    pt: "Forbidden Lands Converter",
+                    en: "Forbidden Lands Converter",
+                    es: "Conversor Forbidden Lands"
+                },
+                description: {
+                    pt: "Converte texto PDF de Forbidden Lands para o Foundry VTT.",
+                    en: "Converts Forbidden Lands PDF text to Foundry VTT.",
+                    es: "Convierte texto PDF de Forbidden Lands para Foundry VTT."
+                }
+            }
+        ];
+
+        let currentLang = 'pt';
+
+        // --- RENDER LOGIC ---
+        function render() {
+            // 1. Update UI Text
+            const ui = translations[currentLang];
+            document.getElementById('header-title').textContent = ui.title;
+            document.getElementById('header-subtitle').textContent = ui.subtitle;
+
+            // 2. Update Buttons Active State
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const lang = btn.getAttribute('onclick').match(/'(.*?)'/)[1];
+                if (lang === currentLang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 3. Render Grid
+            const grid = document.getElementById('app-grid');
+            grid.innerHTML = ''; // Clear existing
+
+            apps.forEach(app => {
+                const card = document.createElement('a');
+                card.href = app.link;
+                card.target = "_blank";
+                card.rel = "noopener noreferrer";
+                card.className = "card";
+                
+                card.innerHTML = `
+                    <div class="icon-box">
+                        <i class="${app.iconClass}"></i>
+                    </div>
+                    <h2>${app.title[currentLang]}</h2>
+                    <p>${app.description[currentLang]}</p>
+                    <div class="card-footer">
+                        ${ui.cta} <i class="fa-solid fa-arrow-right-long"></i>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // --- PUBLIC FUNCTION FOR BUTTONS ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            render();
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+    </script>
+</body>
 </html>
